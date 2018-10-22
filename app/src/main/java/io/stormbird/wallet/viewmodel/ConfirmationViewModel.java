@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
+import io.stormbird.token.tools.Numeric;
 import io.stormbird.wallet.entity.GasSettings;
 import io.stormbird.wallet.entity.Ticket;
 import io.stormbird.wallet.entity.Wallet;
@@ -13,6 +14,7 @@ import io.stormbird.wallet.interact.FindDefaultWalletInteract;
 import io.stormbird.wallet.repository.TokenRepository;
 import io.stormbird.wallet.router.GasSettingsRouter;
 import io.stormbird.wallet.service.MarketQueueService;
+import io.stormbird.wallet.web3.entity.Web3Transaction;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -128,6 +130,27 @@ public class ConfirmationViewModel extends BaseViewModel {
             price = price.multiply(BigInteger.valueOf(iDs.size()));
 
             //marketQueueService.createSalesOrders(defaultWallet.getValue(), price, ticketIDs, contractAddr, firstIndex);
+        }
+    }
+
+    public void signTransaction(Web3Transaction transaction, BigInteger gasPrice, BigInteger gasLimit)
+    {
+        BigInteger addr = Numeric.toBigInt(transaction.recipient.toString());
+
+        if (addr.equals(BigInteger.ZERO)) //constructor
+        {
+            disposable = createTransactionInteract
+                    .create(defaultWallet.getValue(), gasPrice, gasLimit, transaction.payload)
+                    .subscribe(this::onCreateTransaction,
+                               this::onError);
+        }
+        else
+        {
+            byte[] data = Numeric.hexStringToByteArray(transaction.payload);
+            disposable = createTransactionInteract
+                    .create(defaultWallet.getValue(), transaction.recipient.toString(), transaction.value, gasPrice, gasLimit, data)
+                    .subscribe(this::onCreateTransaction,
+                               this::onError);
         }
     }
 }
