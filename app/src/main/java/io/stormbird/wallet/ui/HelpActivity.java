@@ -11,7 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
+//import com.crashlytics.android.Crashlytics;
 
 import io.stormbird.wallet.R;
 import io.stormbird.wallet.entity.HelpItem;
@@ -74,8 +74,8 @@ public class HelpActivity extends BaseActivity {
 
         TextView textForceCrash = findViewById(R.id.test_crash);
         textForceCrash.setOnClickListener(v -> {
-            Crashlytics.log("Test Crash Log");
-            Crashlytics.getInstance().crash();
+            //Crashlytics.log("Test Crash Log");
+            //Crashlytics.getInstance().crash();
         });
     }
 
